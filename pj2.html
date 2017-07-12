@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>13307130207_pj2</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+    <script src="three.js"></script>
+    <script src="Projector.js"></script>
+    <script src="CanvasRenderer.js"></script>
+    <script>
+      var renderer, camera, scene, cube, plane, light;
+      function start() {
+        renderer = new THREE.CanvasRenderer();
+        renderer.setClearColor(0xf0f0f0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas3d').appendChild(renderer.domElement);
+
+        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+        camera.position.z = 800;
+        scene = new THREE.Scene();
+
+        var geometry = new THREE.BoxGeometry(200, 200, 200);
+        for (var i = 0; i < geometry.faces.length; i ++)
+          geometry.faces[i].color.setHex(0xffffff * Math.random());
+        var material = new THREE.MeshBasicMaterial({vertexColors: THREE.FaceColors});
+        cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        var geometry = new THREE.PlaneBufferGeometry(200, 200);
+        geometry.rotateX(-Math.PI / 2);
+        var material = new THREE.MeshBasicMaterial({color: 0xe0e0e0});
+        plane = new THREE.Mesh(geometry, material);
+        plane.position.y = -150;
+        scene.add(plane);
+
+        document.addEventListener('mousedown', mousedown);
+        animate();
+      }
+
+      function animate() {
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+//=================
+      var preX = 0;
+      var preRota = 0;
+      function mousedown(event) {
+        preX = event.clientX;
+        preRota = cube.rotation.y;
+        document.addEventListener('mousemove', mousemove);
+        document.addEventListener('mouseup', mouseup);
+      }
+
+      function mousemove(event) {
+        plane.rotation.y = cube.rotation.y = preRota + (event.clientX - preX) * 0.02;
+      }
+
+      function mouseup(event) {
+        document.removeEventListener('mousemove', mousemove);
+        document.removeEventListener('mouseup', mouseup);
+      }
+    </script>
+  </head>
+  <body onload='start();'>
+    <div id="canvas3d"></div>
+  </body>
+</html>
